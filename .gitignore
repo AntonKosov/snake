@@ -1,3 +1,4 @@
 .vscode
 snake
 *.log
+build
