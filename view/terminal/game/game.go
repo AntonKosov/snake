@@ -11,7 +11,7 @@ import (
 )
 
 type gameScene struct {
-	emmiter utils.Emmiter
+	emitter utils.Emitter
 	// screen       tcell.Screen
 	screenParams view.ScreenParams
 	fieldWidth   int
@@ -28,7 +28,7 @@ type gameScene struct {
 
 func New(screen tcell.Screen, screenParams view.ScreenParams) view.Game {
 	s := gameScene{
-		emmiter: utils.NewEmmiter(screen, screenParams),
+		emitter: utils.NewEmitter(screen, screenParams),
 		// screen:          screen,
 		screenParams:    screenParams,
 		lightFieldStyle: tcell.StyleDefault.Background(tcell.ColorLightGreen),
@@ -42,7 +42,7 @@ func New(screen tcell.Screen, screenParams view.ScreenParams) view.Game {
 }
 
 func (s *gameScene) Activate(fieldWidth, fieldHeight int) {
-	s.emmiter.Clear()
+	s.emitter.Clear()
 
 	s.fieldWidth = fieldWidth
 	s.fieldHeight = fieldHeight
@@ -53,31 +53,31 @@ func (s *gameScene) Activate(fieldWidth, fieldHeight int) {
 }
 
 func (s *gameScene) DrawFrame() {
-	s.emmiter.Show()
+	s.emitter.Show()
 }
 
 func (s *gameScene) OutputSnakeHead(x, y int) {
-	s.emmiter.SetFieldContent(x, y, s.snakeHeadStyle)
+	s.emitter.SetFieldContent(x, y, s.snakeHeadStyle)
 }
 
 func (s *gameScene) OutputSnakeBody(x, y int) {
-	s.emmiter.SetFieldContent(x, y, s.snakeBodyStyle)
+	s.emitter.SetFieldContent(x, y, s.snakeBodyStyle)
 }
 
 func (s *gameScene) OutputField(x, y int) {
 	style := s.getFieldCellStyle(x, y)
-	s.emmiter.SetFieldContent(x, y, style)
+	s.emitter.SetFieldContent(x, y, style)
 }
 
 func (s *gameScene) OutputFruit(x, y int) {
-	s.emmiter.SetFieldContent(x, y, s.fruitStyle)
+	s.emitter.SetFieldContent(x, y, s.fruitStyle)
 }
 
 func (s *gameScene) OutputScore(score int) {
 	font := fonts.Small
 	fontHeight := fonts.FontHeight(font)
-	s.emmiter.FillTopRows(s.scoreStyle, fontHeight)
-	s.emmiter.EmitCenteredText(s.scoreStyle, font, 0, fmt.Sprintf("SCORE: %d", score))
+	s.emitter.FillTopRows(s.scoreStyle, fontHeight)
+	s.emitter.EmitCenteredText(s.scoreStyle, font, 0, fmt.Sprintf("SCORE: %d", score))
 }
 
 func (s *gameScene) GetFieldSize() (width, height int) {

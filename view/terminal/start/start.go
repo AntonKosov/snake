@@ -10,24 +10,24 @@ import (
 )
 
 type startScene struct {
-	emmiter utils.Emmiter
+	emitter utils.Emitter
 }
 
 func New(screen tcell.Screen, screenParams view.ScreenParams) view.Start {
 	s := startScene{
-		emmiter: utils.NewEmmiter(screen, screenParams),
+		emitter: utils.NewEmitter(screen, screenParams),
 	}
 
 	return &s
 }
 
 func (s *startScene) Activate() {
-	s.emmiter.Clear()
+	s.emitter.Clear()
 
 	style := tcell.StyleDefault.Foreground(tcell.ColorGreenYellow).Background(colors.Background)
 
-	s.emmiter.EmitCenteredText(style, fonts.Big, 5, "SNAKE")
-	s.emmiter.EmitCenteredText(style, fonts.Small, 13, "PRESS ENTER")
+	s.emitter.EmitCenteredText(style, fonts.Big, 5, "SNAKE")
+	s.emitter.EmitCenteredText(style, fonts.Small, 13, "PRESS ENTER")
 
-	s.emmiter.Show()
+	s.emitter.Show()
 }

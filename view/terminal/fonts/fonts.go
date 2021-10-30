@@ -3,7 +3,7 @@ package fonts
 type Font string
 
 type font struct {
-	heigth  int
+	height  int
 	letters map[rune][]string
 }
 
@@ -13,14 +13,14 @@ const (
 )
 
 func FontHeight(f Font) int {
-	return fontMap[f].heigth
+	return fontMap[f].height
 }
 
 var fontMap = make(map[Font]font)
 
 func init() {
 	small := font{}
-	small.heigth = 4
+	small.height = 4
 	// Straight: https://patorjk.com/software/taag/#p=display&f=Straight&t=SNAKE%20SCORE%200123456789
 	small.letters = map[rune][]string{
 		'S': {
@@ -175,7 +175,7 @@ func init() {
 func init() {
 	// https://patorjk.com/software/taag/#p=display&f=Varsity&t=SNAKE
 	big := font{
-		heigth: 7,
+		height: 7,
 	}
 	big.letters = map[rune][]string{
 		'S': {

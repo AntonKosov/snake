@@ -8,7 +8,7 @@ import (
 	tcell "github.com/gdamore/tcell/v2"
 )
 
-type Emmiter struct {
+type Emitter struct {
 	screen       tcell.Screen
 	screenParams view.ScreenParams
 
@@ -20,13 +20,13 @@ type Emmiter struct {
 	spacesRow string
 }
 
-func NewEmmiter(screen tcell.Screen, screenParams view.ScreenParams) Emmiter {
+func NewEmitter(screen tcell.Screen, screenParams view.ScreenParams) Emitter {
 	w, h := screen.Size()
 	var spacesRowBuilder strings.Builder
 	for i := 0; i < screenParams.MinScreenWidth; i++ {
 		spacesRowBuilder.WriteRune(' ')
 	}
-	e := Emmiter{
+	e := Emitter{
 		screen:       screen,
 		screenParams: screenParams,
 		originX:      (w - screenParams.MinScreenWidth) / 2,
@@ -39,15 +39,15 @@ func NewEmmiter(screen tcell.Screen, screenParams view.ScreenParams) Emmiter {
 	return e
 }
 
-func (e Emmiter) Clear() {
+func (e Emitter) Clear() {
 	e.screen.Clear()
 }
 
-func (e Emmiter) Show() {
+func (e Emitter) Show() {
 	e.screen.Show()
 }
 
-func (e Emmiter) SetFieldContent(x, y int, style tcell.Style) {
+func (e Emitter) SetFieldContent(x, y int, style tcell.Style) {
 	xScreen := e.originX + x*2
 	yScreen := e.originY + y + e.screenParams.FieldStartY
 
@@ -55,7 +55,7 @@ func (e Emmiter) SetFieldContent(x, y int, style tcell.Style) {
 	e.screen.SetContent(xScreen+1, yScreen, ' ', nil, style)
 }
 
-func (e Emmiter) EmitCenteredText(style tcell.Style, font fonts.Font, y int, str string) {
+func (e Emitter) EmitCenteredText(style tcell.Style, font fonts.Font, y int, str string) {
 	text := fonts.Generate(font, str)
 	x := e.getStartCenteredH(text[0])
 	for i, line := range text {
@@ -63,16 +63,16 @@ func (e Emmiter) EmitCenteredText(style tcell.Style, font fonts.Font, y int, str
 	}
 }
 
-func (e Emmiter) FillTopRows(style tcell.Style, lines int) {
+func (e Emitter) FillTopRows(style tcell.Style, lines int) {
 	for i := 0; i < lines; i++ {
 		e.emitStr(e.originX, e.originY+i, style, e.spacesRow)
 	}
 }
 
-func (e Emmiter) getStartCenteredH(str string) int {
+func (e Emitter) getStartCenteredH(str string) int {
 	return e.centerX - len(str)/2
 }
-func (e Emmiter) emitStr(x, y int, style tcell.Style, str string) {
+func (e Emitter) emitStr(x, y int, style tcell.Style, str string) {
 	for i, c := range str {
 		// fmt.Printf("Character: '%v'\n", c)
 		e.screen.SetContent(x+i, y, c, nil, style)
