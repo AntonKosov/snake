@@ -47,12 +47,12 @@ func (e Emitter) Show() {
 	e.screen.Show()
 }
 
-func (e Emitter) SetFieldContent(x, y int, style tcell.Style) {
+func (e Emitter) SetFieldContent(x, y int, style tcell.Style, char rune) {
 	xScreen := e.originX + x*2
 	yScreen := e.originY + y + e.screenParams.FieldStartY
 
-	e.screen.SetContent(xScreen, yScreen, ' ', nil, style)
-	e.screen.SetContent(xScreen+1, yScreen, ' ', nil, style)
+	e.screen.SetContent(xScreen, yScreen, char, nil, style)
+	e.screen.SetContent(xScreen+1, yScreen, char, nil, style)
 }
 
 func (e Emitter) EmitCenteredText(style tcell.Style, font fonts.Font, y int, str string) {

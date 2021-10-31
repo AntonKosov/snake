@@ -27,13 +27,14 @@ type gameScene struct {
 }
 
 func New(screen tcell.Screen, screenParams view.ScreenParams) view.Game {
+	// characters: https://www.compart.com/en/unicode/block/U+2580
 	s := gameScene{
 		emitter: utils.NewEmitter(screen, screenParams),
 		// screen:          screen,
 		screenParams:    screenParams,
 		lightFieldStyle: tcell.StyleDefault.Background(tcell.ColorLightGreen),
 		darkFieldStyle:  tcell.StyleDefault.Background(tcell.ColorDarkGreen),
-		snakeHeadStyle:  tcell.StyleDefault.Background(tcell.ColorYellow),
+		snakeHeadStyle:  tcell.StyleDefault.Background(tcell.ColorWhite).Foreground(tcell.ColorYellow),
 		snakeBodyStyle:  tcell.StyleDefault.Background(tcell.ColorLightYellow),
 		fruitStyle:      tcell.StyleDefault.Background(tcell.ColorRed),
 		scoreStyle:      tcell.StyleDefault.Background(colors.Background).Foreground(tcell.ColorBlue),
@@ -57,20 +58,20 @@ func (s *gameScene) DrawFrame() {
 }
 
 func (s *gameScene) OutputSnakeHead(x, y int) {
-	s.emitter.SetFieldContent(x, y, s.snakeHeadStyle)
+	s.emitter.SetFieldContent(x, y, s.snakeHeadStyle, '▓')
 }
 
 func (s *gameScene) OutputSnakeBody(x, y int) {
-	s.emitter.SetFieldContent(x, y, s.snakeBodyStyle)
+	s.emitter.SetFieldContent(x, y, s.snakeBodyStyle, '░')
 }
 
 func (s *gameScene) OutputField(x, y int) {
 	style := s.getFieldCellStyle(x, y)
-	s.emitter.SetFieldContent(x, y, style)
+	s.emitter.SetFieldContent(x, y, style, ' ')
 }
 
 func (s *gameScene) OutputFruit(x, y int) {
-	s.emitter.SetFieldContent(x, y, s.fruitStyle)
+	s.emitter.SetFieldContent(x, y, s.fruitStyle, ' ')
 }
 
 func (s *gameScene) OutputScore(score int) {
