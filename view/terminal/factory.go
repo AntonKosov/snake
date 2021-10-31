@@ -104,7 +104,6 @@ func (f *Factory) runInputHandler() {
 	f.terminateWaitGroup.Add(1)
 	go func() {
 		defer f.terminateWaitGroup.Done()
-		failOnResize := false
 		for {
 			select {
 			case <-f.terminateInputCh:
@@ -112,10 +111,6 @@ func (f *Factory) runInputHandler() {
 			case e := <-eventCh:
 				switch event := e.(type) {
 				case *tcell.EventResize:
-					if failOnResize {
-						f.errCh <- fmt.Errorf("screen size has been changed")
-						return
-					}
 					w, h := f.screen.Size()
 					if w < f.screenParams.MinScreenWidth {
 						f.errCh <- fmt.Errorf("screen width must be at least %d", f.screenParams.MinScreenWidth)
@@ -125,7 +120,6 @@ func (f *Factory) runInputHandler() {
 						f.errCh <- fmt.Errorf("screen height must be at least %d", f.screenParams.MinScreenHeight)
 						return
 					}
-					failOnResize = true
 				case *tcell.EventKey:
 					if key, ok := keyMapping[event.Key()]; ok {
 						f.input <- key

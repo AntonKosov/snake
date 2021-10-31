@@ -2,12 +2,27 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"os"
 	"snake/engine"
 	"snake/view/terminal"
 )
 
 func main() {
+	var inputErr error
+	var engineErr error
+	defer func() {
+		if inputErr != nil {
+			fmt.Printf("Input error: %v\n", inputErr)
+			os.Exit(1)
+		}
+		if engineErr != nil {
+			fmt.Printf("Game error: %v\n", engineErr)
+			os.Exit(2)
+		}
+	}()
+
 	errCh := make(chan error, 1)
 	sceneFactory, err := terminal.New(errCh)
 	if err != nil {
@@ -19,14 +34,13 @@ func main() {
 	defer cancel()
 	go func() {
 		select {
-		case err := <-errCh:
-			log.Fatal(err)
+		case inputErr = <-errCh:
+			cancel()
+			return
 		case <-ctx.Done():
 			return
 		}
 	}()
 
-	if err := engine.Run(ctx, sceneFactory, sceneFactory); err != nil {
-		log.Fatal(err)
-	}
+	engineErr = engine.Run(ctx, sceneFactory, sceneFactory)
 }
