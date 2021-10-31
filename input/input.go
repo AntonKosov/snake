@@ -13,5 +13,6 @@ const (
 )
 
 type InputController interface {
+	Error() <-chan error
 	Input() <-chan Input
 }

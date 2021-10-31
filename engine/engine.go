@@ -14,16 +14,14 @@ type eng struct {
 	sceneFactory    SceneFactory
 
 	closingWaitGroup sync.WaitGroup
-	errCh            chan error
 	closeSignal      chan struct{}
 }
 
-func Run(ctx context.Context, sceneFactory SceneFactory, in input.InputController) error {
-	ctx, cancel := context.WithCancel(ctx)
+func Run(sceneFactory SceneFactory, in input.InputController) error {
+	ctx, cancel := context.WithCancel(context.Background())
 	e := eng{
 		controllerInput: make(chan input.Input),
 		sceneFactory:    sceneFactory,
-		errCh:           make(chan error),
 		closeSignal:     make(chan struct{}),
 	}
 	defer func() {
@@ -38,7 +36,7 @@ func Run(ctx context.Context, sceneFactory SceneFactory, in input.InputControlle
 	case <-ctx.Done():
 		close(e.closeSignal)
 		return ctx.Err()
-	case err := <-e.errCh:
+	case err := <-in.Error():
 		close(e.closeSignal)
 		return err
 	case <-e.closeSignal:

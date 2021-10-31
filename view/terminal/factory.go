@@ -25,12 +25,12 @@ type Factory struct {
 	screen             tcell.Screen
 	screenParams       view.ScreenParams
 	input              chan input.Input
+	inputError         chan error
 	terminateWaitGroup sync.WaitGroup
 	terminateInputCh   chan struct{}
-	errCh              chan<- error
 }
 
-func New(errCh chan<- error) (*Factory, error) {
+func New() (*Factory, error) {
 	s, err := tcell.NewScreen()
 	if err != nil {
 		return nil, err
@@ -54,8 +54,8 @@ func New(errCh chan<- error) (*Factory, error) {
 			FieldStartY:     fieldStartY,
 		},
 		input:            make(chan input.Input),
+		inputError:       make(chan error),
 		terminateInputCh: make(chan struct{}),
-		errCh:            errCh,
 	}
 
 	f.runInputHandler()
@@ -92,11 +92,16 @@ func (f *Factory) CreateGameOverScene() view.GameOver {
 func (f *Factory) Close() {
 	close(f.terminateInputCh)
 	f.terminateWaitGroup.Wait()
+	close(f.inputError)
 	f.screen.Fini()
 }
 
 func (f *Factory) Input() <-chan input.Input {
 	return f.input
+}
+
+func (f *Factory) Error() <-chan error {
+	return f.inputError
 }
 
 func (f *Factory) runInputHandler() {
@@ -113,11 +118,11 @@ func (f *Factory) runInputHandler() {
 				case *tcell.EventResize:
 					w, h := f.screen.Size()
 					if w < f.screenParams.MinScreenWidth {
-						f.errCh <- fmt.Errorf("screen width must be at least %d", f.screenParams.MinScreenWidth)
+						f.inputError <- fmt.Errorf("screen width must be at least %d", f.screenParams.MinScreenWidth)
 						return
 					}
 					if h < f.screenParams.MinScreenHeight {
-						f.errCh <- fmt.Errorf("screen height must be at least %d", f.screenParams.MinScreenHeight)
+						f.inputError <- fmt.Errorf("screen height must be at least %d", f.screenParams.MinScreenHeight)
 						return
 					}
 				case *tcell.EventKey:
